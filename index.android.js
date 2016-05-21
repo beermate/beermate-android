@@ -1,7 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
+'use strict';
 
 import React, {Component} from "react";
 import {AppRegistry, StyleSheet, Text, View, TouchableHighlight, Image} from "react-native";
@@ -66,7 +63,7 @@ class BeerMate extends Component {
         }
 
         if (CLOSED === this.state.socketState) {
-            this.socket = new WebSocket('ws://10.0.2.2:2794');
+            this.socket = new WebSocket('ws://' + SERVER_ADDRESS + ':' + SERVER_PORT);
             this.socket.onopen = this.onOpen;
             this.socket.onmessage = this.onMessage;
             this.socket.onclose = this.onClose;
@@ -75,6 +72,9 @@ class BeerMate extends Component {
         }
     };
 }
+
+const SERVER_ADDRESS = '192.168.0.138';
+const SERVER_PORT = '2794';
 
 const CLOSED = 0;
 const OPEN = 1;
