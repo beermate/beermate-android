@@ -3,6 +3,7 @@
 import React, {Component} from "react";
 import {AppRegistry, StyleSheet, Text, View, TouchableHighlight, Image} from "react-native";
 import LiterCounter from './LiterCounter';
+import BloodAlcoholCounter from './BloodAlcoholCounter';
 
 class BeerMate extends Component {
     constructor(props) {
@@ -12,14 +13,17 @@ class BeerMate extends Component {
             backgroundImage: backgroundImages[5],
             socketState: CLOSED
         };
-        this.literCounter = new LiterCounter();
+        this.bloodAlcoholCounter = new BloodAlcoholCounter(80, 'male', 0.031);
+        this.literCounter = new LiterCounter(this.bloodAlcoholCounter);
     }
 
     render() {
         return (
             <Image source={this.state.backgroundImage} style={styles.container}>
                 <Text style={styles.instructions}>
-                    Current beer level: {this.state.beerLevel} ({this.state.socketState}) - {Math.round(10 * this.literCounter.getLiterCount())/10} L
+                    Current beer level: {this.state.beerLevel} ({this.state.socketState})
+                    {Math.round(10 * this.literCounter.getLiterCount())/10} L
+                    {Math.round(10000 * this.bloodAlcoholCounter.getBloodAlcohol())/10} ‰
                 </Text>
                 <TouchableHighlight onPress={this.toggleConnection}>
                     <View>
@@ -48,7 +52,7 @@ class BeerMate extends Component {
 
         console.log('Received event with level ' + beerLevel + ', image no: ' + imageNo);
 
-        //this.literCounter.pushLevel(beerLevel).done();
+        this.literCounter.pushLevel(beerLevel);
 
         this.setState({
             beerLevel: Math.round(100 * beerLevel),
@@ -79,7 +83,7 @@ class BeerMate extends Component {
     };
 }
 
-const SERVER_ADDRESS = '192.168.0.138';
+const SERVER_ADDRESS = '192.168.0.173';
 const TEST_SERVER_ADDRESS = '10.0.2.2';
 const SERVER_PORT = '2794';
 
