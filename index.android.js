@@ -12,16 +12,8 @@ class BeerMate extends Component {
         this.state = {
             beerLevel: 0,
             backgroundImage: backgroundImages[5],
-            socketState: 'initial'
+            socketState: CLOSED
         };
-    }
-
-    componentDidMount() {
-        this.socket = new WebSocket('ws://10.0.2.2:2794');
-        this.socket.onopen = this.onOpen;
-        this.socket.onmessage = this.onMessage;
-        this.socket.onclose = this.onClose;
-        this.socket.onerror = this.onError;
     }
 
     render() {
@@ -30,9 +22,9 @@ class BeerMate extends Component {
                 <Text style={styles.instructions}>
                     Current beer level: {this.state.beerLevel} ({this.state.socketState})
                 </Text>
-                <TouchableHighlight onPress={this.incrBeerLevel}>
+                <TouchableHighlight onPress={this.toggleConnection}>
                     <View>
-                        <Text>Press me!</Text>
+                        <Text>{OPEN === this.state.socketState || OPENING === this.state.socketState? 'Disconnect' : 'Connect'}</Text>
                     </View>
                 </TouchableHighlight>
             </Image>
@@ -40,15 +32,15 @@ class BeerMate extends Component {
     }
 
     onOpen = () => {
-        this.setState({beerLevel: 1, socketState: 'open'});
+        this.setState({socketState: OPEN});
     };
 
     onClose = (event: Event) => {
-        this.setState({socketState: 'closed'});
+        this.setState({socketState: CLOSED});
     };
 
     onError = (event: Event) => {
-        this.setState({socketState: 'error'});
+        this.setState({socketState: CLOSED});
     };
 
     onMessage = (event: Event) => {
@@ -61,10 +53,32 @@ class BeerMate extends Component {
         });
     };
 
-    incrBeerLevel = () => {
-        this.socket.send("Test");
+    toggleConnection = () => {
+        if (OPEN === this.state.socketState) {
+            this.socket.close();
+            this.socket.onopen = null;
+            this.socket.onmessage = null;
+            this.socket.onclose = null;
+            this.socket.onerror = null;
+            this.setState({socketState: CLOSED});
+
+            return;
+        }
+
+        if (CLOSED === this.state.socketState) {
+            this.socket = new WebSocket('ws://10.0.2.2:2794');
+            this.socket.onopen = this.onOpen;
+            this.socket.onmessage = this.onMessage;
+            this.socket.onclose = this.onClose;
+            this.socket.onerror = this.onError;
+            this.setState({socketState: OPENING});
+        }
     };
 }
+
+const CLOSED = 0;
+const OPEN = 1;
+const OPENING = 2;
 
 const backgroundImages = [
     require('./img/beer-1.png'),
