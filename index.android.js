@@ -4,7 +4,7 @@
  */
 
 import React, {Component} from "react";
-import {AppRegistry, StyleSheet, Text, View, TouchableHighlight} from "react-native";
+import {AppRegistry, StyleSheet, Text, View, TouchableHighlight, Image} from "react-native";
 
 class BeerMate extends Component {
     constructor(props) {
@@ -22,16 +22,7 @@ class BeerMate extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <Text style={styles.welcome}>
-                    Welcome to React Native!
-                </Text>
-                <Text style={styles.instructions}>
-                    To get started, edit index.android.js
-                </Text>
-                <Text style={styles.instructions}>
-                    Shake or press menu button for dev menu
-                </Text>
+            <Image source={require('./img/full.png')} style={styles.container}>
                 <Text style={styles.instructions}>
                     Current beer level: {this.state.beerLevel}
                 </Text>
@@ -40,7 +31,7 @@ class BeerMate extends Component {
                         <Text>Press me!</Text>
                     </View>
                 </TouchableHighlight>
-            </View>
+            </Image>
         );
     }
 
@@ -65,6 +56,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
+        width: null,
+        height: null,
     },
     welcome: {
         fontSize: 20,
