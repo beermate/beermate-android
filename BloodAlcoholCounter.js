@@ -21,7 +21,7 @@ export default class BloodAlcoholCounter {
 
     deductProcessedAlcohol() {
         // TODO deduct processed alcohol
-        
+
         this.currentTime = new Date();
     }
 
@@ -31,7 +31,9 @@ export default class BloodAlcoholCounter {
         // Widmark formula
         let milliLiters = 1000 * liters;
         let grams = milliLiters * this.drinkAlcohol * 0.8;
-        let consumedAlcohol = (3 * grams) / (this.bodyWeight * this.genderCoef);
+        let consumedAlcohol = grams / (this.bodyWeight * this.genderCoef);
+
+        console.log('Drank ' + milliLiters + 'ml with ' + grams + 'g alcohol: ' + consumedAlcohol + '‰');
 
         this.bloodAlcohol += consumedAlcohol/1000;
     }

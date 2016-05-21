@@ -4,13 +4,13 @@ import React, {Component} from "react";
 import {AppRegistry, StyleSheet, Text, View, TouchableHighlight, Image} from "react-native";
 import LiterCounter from './LiterCounter';
 import BloodAlcoholCounter from './BloodAlcoholCounter';
-
+640
 class BeerMate extends Component {
     constructor(props) {
         super(props);
         this.state = {
             beerLevel: 0,
-            backgroundImage: backgroundImages[5],
+            beerImage: beerImages[5],
             socketState: CLOSED
         };
         this.bloodAlcoholCounter = new BloodAlcoholCounter(80, 'male', 0.031);
@@ -19,17 +19,26 @@ class BeerMate extends Component {
 
     render() {
         return (
-            <Image source={this.state.backgroundImage} style={styles.container}>
-                <Text style={styles.instructions}>
-                    Current beer level: {this.state.beerLevel} ({this.state.socketState})
-                    {Math.round(10 * this.literCounter.getLiterCount())/10} L
-                    {Math.round(10000 * this.bloodAlcoholCounter.getBloodAlcohol())/10} ‰
-                </Text>
-                <TouchableHighlight onPress={this.toggleConnection}>
-                    <View>
-                        <Text>{OPEN === this.state.socketState || OPENING === this.state.socketState? 'Disconnect' : 'Connect'}</Text>
+            <Image source={require('./img/bg.png')} style={styles.container}>
+                <View style={styles.beerContainer}>
+                    <Image source={this.state.beerImage} style={styles.beerImage}>
+                        <TouchableHighlight onPress={this.toggleConnection}>
+                            <Text>{OPEN === this.state.socketState || OPENING === this.state.socketState? 'Disconnect' : 'Connect'} ({this.state.socketState})</Text>
+                        </TouchableHighlight>
+                    </Image>
+                </View>
+                <View style={styles.footer}>
+                    <View style={styles.literCount}>
+                        <Text style={styles.footerText}>
+                            {Math.round(10 * this.literCounter.getLiterCount())/10} L
+                        </Text>
                     </View>
-                </TouchableHighlight>
+                    <View style={styles.bloodAlcoholCount}>
+                        <Text style={styles.footerText}>
+                            {Math.round(10000 * this.bloodAlcoholCounter.getBloodAlcohol())/10} ‰
+                        </Text>
+                    </View>
+                </View>
             </Image>
         );
     }
@@ -56,7 +65,7 @@ class BeerMate extends Component {
 
         this.setState({
             beerLevel: Math.round(100 * beerLevel),
-            backgroundImage: backgroundImages[imageNo]
+            beerImage: beerImages[imageNo]
         });
     };
 
@@ -83,7 +92,7 @@ class BeerMate extends Component {
     };
 }
 
-const SERVER_ADDRESS = '192.168.0.173';
+const SERVER_ADDRESS = '192.168.43.177';
 const TEST_SERVER_ADDRESS = '10.0.2.2';
 const SERVER_PORT = '2794';
 
@@ -91,7 +100,7 @@ const CLOSED = 0;
 const OPEN = 1;
 const OPENING = 2;
 
-const backgroundImages = [
+const beerImages = [
     require('./img/beer-1.png'),
     require('./img/beer-2.png'),
     require('./img/beer-3.png'),
@@ -103,6 +112,7 @@ const backgroundImages = [
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
@@ -119,6 +129,41 @@ const styles = StyleSheet.create({
         color: '#333333',
         marginBottom: 5,
     },
+    beerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        //backgroundColor: 'green',
+    },
+    beerImage: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 250,
+        height: 393,
+        paddingBottom: 50,
+    },
+    footer: {
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        position: 'absolute',
+        bottom: 0,
+        height: 70,
+        width: 350,
+    },
+    literCount: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    bloodAlcoholCount: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    footerText: {
+        fontSize: 20,
+    }
 });
 
 AppRegistry.registerComponent('BeerMate', () => BeerMate);
